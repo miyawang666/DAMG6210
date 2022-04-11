@@ -160,3 +160,15 @@ AVG(StandardCost)
 FOR DaysToManufacture IN ([0], [1], [2], [3], [4])
 ) AS PivotTable;
 
+
+   
+USE AdventureWorks2008R2;
+select 'Sold Quantity' as 'Territory ID',[1], [4], [6], [10]
+from(select TerritoryID, OrderQty
+  from Sales.SalesOrderHeader sh
+  join Sales.SalesOrderDetail sd
+  on sh.SalesOrderID = sd.SalesOrderID) as sourcetable
+pivot
+(max(OrderQty) for TerritoryID in ([1], [4], [6], [10])) pivottable;
+-- Sold Quantity	44	33	32	27
+
