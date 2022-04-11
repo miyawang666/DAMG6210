@@ -147,3 +147,16 @@ FROM
 PIVOT(
 	SUM(TotalDue) FOR [Order Date] IN ([2008-5-1],[2008-5-2],[2008-5-3],[2008-5-4],[2008-5-5])
 ) AS PivotTable;
+
+USE AdventureWorks2008R2;
+SELECT 'AverageCost' AS Cost_Sorted_By_Production_Days, 
+[0], [1], [2], [3], [4]
+FROM
+(SELECT DaysToManufacture, StandardCost 
+    FROM Production.Product) AS SourceTable
+PIVOT
+(
+AVG(StandardCost)
+FOR DaysToManufacture IN ([0], [1], [2], [3], [4])
+) AS PivotTable;
+
