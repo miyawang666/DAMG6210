@@ -322,3 +322,34 @@ begin
 end
 
 drop trigger trProcessingFee
+
+
+-- Suppose that your company has a business rule that no employee is allowed to have a salary greater than $200,000 unless the authorizing
+-- manager’s employeeID has been entered with the transaction. Assume that a table, named employees, contains these columns:
+Column name	Data type
+EmployeeID	int
+Salary	smallmoney
+HireDate	smalldatetime
+ApprovalID	int
+
+CREATE TRIGGER trgSalary ON employees
+FOR UPDATE
+AS
+IF UPDATE(Salary) 
+  
+IF (SELECT COUNT(*) FROM INSERTED WHERE 
+Salary > 150000 AND ApprovalID IS NULL) > 0
+   BEGIN
+   --THE DATA INSERTED VIOLATES BUSINESS RULES
+   --REMOVE ROWS FROM THE EMPLOYEES TABLE
+   DELETE FROM employees
+   FROM employees e JOIN INSERTED i 
+     
+ON (e.EmployeeID = i.EmployeeID)
+ 
+WHERE e.Salary > 200000
+  AND e.ApprovalID is NULL
+  --RETURN AN ERROR BACK TO THE CALLING PROGRAM
+   RAISERROR ('You must enter an ApprovalID for 
+  salaries greater than $200,000', 16, 1)
+   END
