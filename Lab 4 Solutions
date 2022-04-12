@@ -28,6 +28,24 @@ CONSTRAINT PKTargetMailingLists PRIMARY KEY CLUSTERED
 -- Part B
 
 -- B-1
+/* Using the content of AdventureWorks, write a query to retrieve 
+   all unique customers with all salespeople they have dealt with. 
+   If a customer has never worked with a salesperson, make the 
+   'Salesperson ID' column blank instead of displaying NULL. 
+   Sort the returned data by CustomerID in the descending order. 
+   The result should have the following format. 
+ 
+   Hint: Use the SalesOrderHeadrer table. 
+ 
+CustomerID SalesPerson ID 
+30118  275, 277 
+30117  275, 277 
+30116  276 
+30115  289 
+30114  290 
+30113  282 
+30112  280, 284 
+*/
 
 Use AdventureWorks2008R2;
 SELECT distinct c.CustomerID,
@@ -41,6 +59,19 @@ order by c.CustomerID desc;
 
 
 -- B-2
+/* Using the content of AdventureWorks, write a query to retrieve the top five  
+     products for each year. Use OrderQty of SalesOrderDetail to calculate the total quantity sold. 
+     The top five products have the five highest sold quantities.  Also calculate the top five products'  
+     sold quantity for a year as a percentage of the total quantity sold for the year.  
+    
+     Return the data in the following format. 
+ 
+ Year % of Total Sale   Top5Products 
+ 2005 19.58980418600  709, 712, 715, 770, 760 
+ 2006 13.70859187700  863, 715, 712, 711, 852 
+ 2007 12.39464630800  712, 870, 711, 708, 715 
+ 2008 15.68128704000  870, 712, 711, 708, 707 
+*/ 
 Use AdventureWorks2008R2
 WITH Temp1 AS
 
@@ -77,6 +108,16 @@ group by t1.Year, t2.ttl;
 
 
 -- Part C
+ 
+/* Bill of Materials - Recursive */ 
+/* Use Adventureworks */ 
+/* The following code retrieves the components required for manufacturing 
+   the "Mountain-500 Black, 48" (Product 992). Use it as the starter code 
+   for calculating the material cost reduction if the component 815 
+   is manufactured internally at the level 1 instead of purchasing it 
+   for use at the level 0. Use the list price of a component as 
+   the material cost for the component. */ 
+
 
 WITH Parts(AssemblyID, ComponentID, PerAssemblyQty, EndDate, 
 ComponentLevel,ListPrice) AS 
