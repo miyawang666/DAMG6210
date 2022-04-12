@@ -161,3 +161,74 @@ SELECT DISTINCT
 		FOR XML PATH('')) , 1, 2, '') AS listCustomers
 FROM temp t2
 ORDER BY TerritoryID;
+
+/* Write a query to retrieve the top 2 customers, based on the total purchase,
+for each year. Use TotalDue of SalesOrderHeader to calculate the total purchase.
+The top 2 customers have the 2 highest total purchase amounts.
+Also calculate the top two customer's total purchase as a percentage of the total
+sale for the year. Return the data in the following format.
+The email address is the customer's.
+Sort the report by the year.
+
+Year   % of Total Sale       Top2Customers
+2005       4.16 29624 joseph0@adventure-works.com, 29861 phyllis1@adventure-works.com
+2006       2.17 29614 ryan1@adventure-works.com, 29716 blaine0@adventure-works.com
+2007       1.74 29913 anton0@adventure-works.com, 29818 roger0@adventure-works.com
+2008       1.68 29923 edward1@adventure-works.com, 29641 raul0@adventure-works.com
+*/
+
+
+
+Select A.Year, A.[% of Total Sale]+B.[% of Total Sale] as [% of Total Sale]
+,concat(A.CustomerId,' ',A.EmailAddress,', ',B.CustomerId,' ',B.EmailAddress) as Top2Customers
+from
+(
+Select t1.Year, (TotalPurchase/t2.TotalSale)*100 as "% of Total Sale", t1.CustomerID, P.EmailAddress
+from
+   (
+   select CustomerID, year(OrderDate) as Year, sum(totaldue) as TotalPurchase,
+   ROW_NUMBER() OVER(PARTITION BY year(orderDate) ORDER BY sum(totaldue) DESC) as rownum
+   from sales.SalesOrderHeader
+   group by CustomerID, year(OrderDate)
+   ) as t1
+left join
+(
+select year(OrderDate) as Year, sum(totaldue) as TotalSale
+from sales.SalesOrderHeader
+group by year(OrderDate)
+)t2
+on t1.Year = t2.Year
+left join
+Sales.Customer as C
+on t1.CustomerID=C.CustomerID
+left join
+Person.EmailAddress as P
+on C.PersonID=P.BusinessEntityID
+where rownum=1) A
+left join
+(
+Select t1.Year, (TotalPurchase/t2.TotalSale)*100 as "% of Total Sale", t1.CustomerID, P.EmailAddress
+from
+   (
+   select CustomerID, year(OrderDate) as Year, sum(totaldue) as TotalPurchase,
+   ROW_NUMBER() OVER(PARTITION BY year(orderDate) ORDER BY sum(totaldue) DESC) as rownum
+   from sales.SalesOrderHeader
+   group by CustomerID, year(OrderDate)
+   ) as t1
+left join
+(
+select year(OrderDate) as Year, sum(totaldue) as TotalSale
+from sales.SalesOrderHeader
+group by year(OrderDate)
+)t2
+on t1.Year = t2.Year
+left join
+Sales.Customer as C
+on t1.CustomerID=C.CustomerID
+left join
+Person.EmailAddress as P
+on C.PersonID=P.BusinessEntityID
+where rownum=2
+) B
+on A.year = B.year
+ORDER BY year
